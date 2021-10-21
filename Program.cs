@@ -5,6 +5,8 @@ namespace VirtualATMMachine
 {
     class Program
     {
+        static Random random = new Random();
+
         static void Main(string[] args)
         {
             InitialisationSqliteFile();
@@ -36,7 +38,6 @@ namespace VirtualATMMachine
 
         static void CreateAccount()
         {
-            Random random = new Random();
             int perCent = random.Next(0, 100);
             int startBalance = 0;
 
@@ -86,12 +87,19 @@ namespace VirtualATMMachine
 
         static string RandomAccountNumberGenerator()
         {
-            Random random = new Random();
-            return random.Next(10000000, 99999999).ToString();
+            string newRandomAccountNumber;
+            bool isDuplicated = false;
+
+            do
+            {
+                newRandomAccountNumber = random.Next(10000000, 99999999).ToString();
+                isDuplicated = CheckIsAccountExist(newRandomAccountNumber);
+            }
+            while (isDuplicated);
+
+            return newRandomAccountNumber;
         }
-
-       
-
+        
         static void Login()
         {
             string accountNumber;

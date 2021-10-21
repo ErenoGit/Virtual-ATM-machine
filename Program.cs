@@ -25,22 +25,30 @@ namespace VirtualATMMachine
             Console.WriteLine("------Virtual ATM-------");
             Console.WriteLine("------------------------");
 
+            string choice;
+            bool shouldReEnterChoice = true;
 
-            Console.WriteLine("Enter 1 to login to your virtual account.");
-            Console.WriteLine("Enter 2 to create a new virtual account.");
-
-            string choise = Console.ReadLine();
-
-            if(choise == "1")
+            do
             {
-                Login();
+                Console.WriteLine("Enter 1 to login to your virtual account.");
+                Console.WriteLine("Enter 2 to create a new virtual account.");
+
+                choice = Console.ReadLine();
+
+                if (choice == "1")
+                {
+                    Login();
+                    shouldReEnterChoice = false;
+                }
+                else if (choice == "2")
+                {
+                    CreateAccount();
+                    shouldReEnterChoice = false;
+                }
+                else
+                    Console.WriteLine("Invalid value.");
             }
-            else if(choise == "2")
-            {
-                CreateAccount();
-            }
-            else
-                Console.WriteLine("Invalid value. End of program.");
+            while (shouldReEnterChoice);
 
             Console.WriteLine("End of program. Press anything to close.");
             Console.ReadKey();

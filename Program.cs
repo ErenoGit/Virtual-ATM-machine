@@ -15,7 +15,7 @@ namespace VirtualATMMachine
                 if (args.Length > 0)
                 {
                     databaseLocation = args[0];
-                    Console.WriteLine("databaseLocation: " + databaseLocation);
+                    Console.WriteLine("Your database file location is: " + databaseLocation);
                 }
             }
 

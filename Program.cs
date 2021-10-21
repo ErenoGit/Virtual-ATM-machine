@@ -40,9 +40,6 @@ namespace VirtualATMMachine
             int perCent = random.Next(0, 100);
             int startBalance = 0;
 
-            
-
-
             string accountNumber = RandomAccountNumberGenerator();
             int pin;
             do

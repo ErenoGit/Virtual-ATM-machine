@@ -148,6 +148,46 @@ namespace VirtualATMMachine
 
             Console.WriteLine("Welcome to your account number: " + accountNumber);
             Console.WriteLine("Your account balance is: " + GetBalance(accountNumber));
+
+            string choice, howMuch;
+            int howMuchInt;
+
+            Console.WriteLine("Enter 1 to deposit money.");
+            Console.WriteLine("Enter 2 to withdraw money.");
+            Console.WriteLine("Enter 3 to logout.");
+
+            choice = Console.ReadLine();
+
+            if (choice == "1")
+            {
+                Console.WriteLine("How much do you want to deposit?");
+                howMuch = Console.ReadLine();
+                if (!Int32.TryParse(howMuch, out howMuchInt))
+                {
+                    Console.WriteLine("You entered an incorrect value! You will be logged out.");
+                }
+                else
+                {
+                    SetBalance(accountNumber, GetBalance(accountNumber)+ howMuchInt);
+                    Console.WriteLine("You deposited "+ howMuch);
+                }
+            }
+            else if (choice == "2")
+            {
+                Console.WriteLine("How much do you want to withdraw?");
+                howMuch = Console.ReadLine();
+                if (!Int32.TryParse(howMuch, out howMuchInt))
+                {
+                    Console.WriteLine("You entered an incorrect value! You will be logged out.");
+                }
+                else
+                {
+                    SetBalance(accountNumber, GetBalance(accountNumber) - howMuchInt);
+                    Console.WriteLine("You withdrawed " + howMuch);
+                }
+            }
+            else
+                Console.WriteLine("Invalid value. You will be logged out.");
         }
         
         static void InitialisationSqliteFile()
@@ -206,7 +246,7 @@ namespace VirtualATMMachine
 
         static int GetBalance(string accountNumber)
         {
-            int pin = 0;
+            int balance = 0;
 
             using (var sqlite2 = new SQLiteConnection($"Data Source={databaseLocation}"))
             {
@@ -216,21 +256,21 @@ namespace VirtualATMMachine
                 command.Parameters.Add(new SQLiteParameter("@param1", accountNumber));
                 SQLiteDataReader reader = command.ExecuteReader();
                 reader.Read();
-                pin = Int32.Parse(reader["balance"].ToString());
+                balance = Int32.Parse(reader["balance"].ToString());
                 sqlite2.Close();
             }
 
-            return pin;
+            return balance;
         }
 
-        static void SetBalance(string accountNumber, int stanKonta)
+        static void SetBalance(string accountNumber, int balance)
         {
             using (var sqlite2 = new SQLiteConnection($"Data Source={databaseLocation}"))
             {
                 sqlite2.Open();
                 string sql = $"UPDATE accounts SET balance = @param1 WHERE accountnumber = @param2";
                 SQLiteCommand command = new SQLiteCommand(sql, sqlite2);
-                command.Parameters.Add(new SQLiteParameter("@param1", stanKonta));
+                command.Parameters.Add(new SQLiteParameter("@param1", balance));
                 command.Parameters.Add(new SQLiteParameter("@param2", accountNumber));
                 command.ExecuteNonQuery();
                 sqlite2.Close();

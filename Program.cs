@@ -53,8 +53,11 @@ namespace VirtualATMMachine
         {
             var sqlite2 = new SQLiteConnection("Data Source=database.sqlite");
             sqlite2.Open();
-            string sql = $"INSERT INTO accounts(accountNumber, pin, balance) VALUES('{accountNumber}',{pin},{balance});";
+            string sql = $"INSERT INTO accounts(accountNumber, pin, balance) VALUES(@param1,@param2,@param3);";
             SQLiteCommand command = new SQLiteCommand(sql, sqlite2);
+            command.Parameters.Add(new SQLiteParameter("@param1", accountNumber));
+            command.Parameters.Add(new SQLiteParameter("@param2", pin));
+            command.Parameters.Add(new SQLiteParameter("@param3", balance));
             command.ExecuteNonQuery();
             sqlite2.Close();
         }
@@ -117,18 +120,19 @@ namespace VirtualATMMachine
 
         static bool CheckIsAccountExist(string accountNumber)
         {
-            bool czyIstnieje = false;
+            bool isExist = false;
 
             var sqlite2 = new SQLiteConnection("Data Source=database.sqlite");
             sqlite2.Open();
-            string sql = $"SELECT * FROM accounts WHERE accountNumber = '{accountNumber}'";
+            string sql = $"SELECT * FROM accounts WHERE accountNumber = @param1";
             SQLiteCommand command = new SQLiteCommand(sql, sqlite2);
+            command.Parameters.Add(new SQLiteParameter("@param1", accountNumber));
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
-                czyIstnieje = true;
+                isExist = true;
             sqlite2.Close();
 
-            return czyIstnieje;
+            return isExist;
         }
 
         static int GetPIN(string accountNumber)
@@ -137,8 +141,9 @@ namespace VirtualATMMachine
 
             var sqlite2 = new SQLiteConnection("Data Source=database.sqlite");
             sqlite2.Open();
-            string sql = $"SELECT pin FROM accounts WHERE accountNumber='{accountNumber}'";
+            string sql = $"SELECT pin FROM accounts WHERE accountNumber= @param1";
             SQLiteCommand command = new SQLiteCommand(sql, sqlite2);
+            command.Parameters.Add(new SQLiteParameter("@param1", accountNumber));
             SQLiteDataReader reader = command.ExecuteReader();
             reader.Read();
             pin = Int32.Parse(reader["pin"].ToString());
@@ -153,8 +158,9 @@ namespace VirtualATMMachine
 
             var sqlite2 = new SQLiteConnection("Data Source=database.sqlite");
             sqlite2.Open();
-            string sql = $"SELECT balance FROM accounts WHERE accountNumber = '{accountNumber}'";
+            string sql = $"SELECT balance FROM accounts WHERE accountNumber = @param1";
             SQLiteCommand command = new SQLiteCommand(sql, sqlite2);
+            command.Parameters.Add(new SQLiteParameter("@param1", accountNumber));
             SQLiteDataReader reader = command.ExecuteReader();
             reader.Read();
             pin = Int32.Parse(reader["balance"].ToString());
@@ -167,8 +173,10 @@ namespace VirtualATMMachine
         {
             var sqlite2 = new SQLiteConnection("Data Source=database.sqlite");
             sqlite2.Open();
-            string sql = $"UPDATE accounts SET balance = {stanKonta} WHERE accountnumber = '{accountNumber}'";
+            string sql = $"UPDATE accounts SET balance = @param1 WHERE accountnumber = @param2";
             SQLiteCommand command = new SQLiteCommand(sql, sqlite2);
+            command.Parameters.Add(new SQLiteParameter("@param1", stanKonta));
+            command.Parameters.Add(new SQLiteParameter("@param2", accountNumber));
             command.ExecuteNonQuery();
             sqlite2.Close();
         }

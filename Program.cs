@@ -1,59 +1,55 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.SQLite;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Bankomat
+namespace VirtualATMMachine
 {
     class Program
     {
         static void Main(string[] args)
         {
-            InicjalizacjaPlikuSqlite();
+            InitialisationSqliteFile();
 
             Console.WriteLine("------------------------");
-            Console.WriteLine("---Wirtualny bankomat---");
+            Console.WriteLine("---Virtual ATM---");
             Console.WriteLine("------------------------");
 
 
-            Console.WriteLine("Wpisz 1 aby zalogować się do swojego wirtualnego konta.");
-            Console.WriteLine("Wpisz 2 aby stworzyć nowe wirtualne konto.");
+            Console.WriteLine("Enter 1 to login to your virtual account.");
+            Console.WriteLine("Enter 2 to create a new virtual account.");
 
-            string wybor = Console.ReadLine();
+            string choise = Console.ReadLine();
 
-            if(wybor == "1")
+            if(choise == "1")
             {
-                Logowanie();
+                Login();
             }
-            else if(wybor == "2")
+            else if(choise == "2")
             {
-                StworzKonto();
+                CreateAccount();
             }
             else
-                Console.WriteLine("Niepoprawna wartość. Koniec programu.");
+                Console.WriteLine("Invalid value. End of program.");
 
-            Console.WriteLine("Koniec programu. Naciśnij cokolwiek aby zamknąć.");
+            Console.WriteLine("End of program. Press anything to close.");
             Console.ReadKey();
         }
 
-        static void StworzKonto()
+        static void CreateAccount()
         {
-            string numerKonta = GeneratorLosowegoNumeruKonta();
+            string accountNumber = RandomAccountNumberGenerator();
             int pin;
             do
             {
-                Console.WriteLine("Wpisz PIN do swojego konta (4 cyfry):");
+                Console.WriteLine("Enter your account PIN (4 digits):");
             }
             while (!Int32.TryParse(Console.ReadLine(), out pin) || pin.ToString().Length != 4);
 
-            DodajNoweKonto(numerKonta, pin, 0);
+            CreateNewAccount(accountNumber, pin, 0);
 
-            Console.WriteLine("Pomyślnie stworzono nowe konto! Numer konta: " + numerKonta);
+            Console.WriteLine("A new account has been successfully created! Account number: " + accountNumber);
         }
 
-        static void DodajNoweKonto(string accountNumber, int pin, int balance)
+        static void CreateNewAccount(string accountNumber, int pin, int balance)
         {
             var sqlite2 = new SQLiteConnection("Data Source=database.sqlite");
             sqlite2.Open();
@@ -63,7 +59,7 @@ namespace Bankomat
             sqlite2.Close();
         }
 
-        static string GeneratorLosowegoNumeruKonta()
+        static string RandomAccountNumberGenerator()
         {
             Random random = new Random();
             return random.Next(10000000, 99999999).ToString();
@@ -71,40 +67,40 @@ namespace Bankomat
 
        
 
-        static void Logowanie()
+        static void Login()
         {
-            string numerKonta;
+            string accountNumber;
             int pin;
-            bool czyKontoIstnieje = false;
-            bool czyPINJestDobry = false;
+            bool isAccountExist = false;
+            bool isPINValid = false;
 
             do
             {
-                Console.WriteLine("Wpisz numer swojego konta:");
-                numerKonta = Console.ReadLine();
-                czyKontoIstnieje = SprawdzCzyKontoIstnieje(numerKonta);
-            } while (!czyKontoIstnieje);
+                Console.WriteLine("Enter your account number:");
+                accountNumber = Console.ReadLine();
+                isAccountExist = CheckIsAccountExist(accountNumber);
+            } while (!isAccountExist);
 
             do
             {
-                Console.WriteLine("Wpisz PIN do swojego konta (4 cyfry):");
+                Console.WriteLine("Enter your account PIN (4 digits):");
             }
             while (!Int32.TryParse(Console.ReadLine(), out pin) || pin.ToString().Length != 4);
 
-            czyPINJestDobry = PobierzPIN(numerKonta) == pin;
+            isPINValid = GetPIN(accountNumber) == pin;
 
-            if (!czyPINJestDobry)
+            if (!isPINValid)
             {
-                Console.WriteLine("PIN jest niepoprawny!");
+                Console.WriteLine("The PIN is incorrect!");
                 return;
             }
 
             Console.Clear();
-            Console.WriteLine("Witaj na swoim koncie o numerze: "+ numerKonta);
-            Console.WriteLine("Twój stan konta to: "+ PobierzStanKonta(numerKonta));
+            Console.WriteLine("Welcome to your account number: " + accountNumber);
+            Console.WriteLine("Your account balance is: " + GetBalance(accountNumber));
         }
-
-        static void InicjalizacjaPlikuSqlite()
+        
+        static void InitialisationSqliteFile()
         {
             if (!System.IO.File.Exists("database.sqlite"))
             {
@@ -119,13 +115,13 @@ namespace Bankomat
             }
         }
 
-        static bool SprawdzCzyKontoIstnieje(string numerKonta)
+        static bool CheckIsAccountExist(string accountNumber)
         {
             bool czyIstnieje = false;
 
             var sqlite2 = new SQLiteConnection("Data Source=database.sqlite");
             sqlite2.Open();
-            string sql = $"SELECT * FROM accounts WHERE accountNumber = '{numerKonta}'";
+            string sql = $"SELECT * FROM accounts WHERE accountNumber = '{accountNumber}'";
             SQLiteCommand command = new SQLiteCommand(sql, sqlite2);
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
@@ -135,13 +131,13 @@ namespace Bankomat
             return czyIstnieje;
         }
 
-        static int PobierzPIN(string numerKonta)
+        static int GetPIN(string accountNumber)
         {
             int pin = 0;
 
             var sqlite2 = new SQLiteConnection("Data Source=database.sqlite");
             sqlite2.Open();
-            string sql = $"SELECT pin FROM accounts WHERE accountNumber='{numerKonta}'";
+            string sql = $"SELECT pin FROM accounts WHERE accountNumber='{accountNumber}'";
             SQLiteCommand command = new SQLiteCommand(sql, sqlite2);
             SQLiteDataReader reader = command.ExecuteReader();
             reader.Read();
@@ -151,7 +147,7 @@ namespace Bankomat
             return pin;
         }
 
-        static int PobierzStanKonta(string accountNumber)
+        static int GetBalance(string accountNumber)
         {
             int pin = 0;
 
@@ -167,11 +163,11 @@ namespace Bankomat
             return pin;
         }
 
-        static void UstawStanKonta(string numerKonta, int stanKonta)
+        static void SetBalance(string accountNumber, int stanKonta)
         {
             var sqlite2 = new SQLiteConnection("Data Source=database.sqlite");
             sqlite2.Open();
-            string sql = $"UPDATE accounts SET balance = {stanKonta} WHERE accountnumber = '{numerKonta}'";
+            string sql = $"UPDATE accounts SET balance = {stanKonta} WHERE accountnumber = '{accountNumber}'";
             SQLiteCommand command = new SQLiteCommand(sql, sqlite2);
             command.ExecuteNonQuery();
             sqlite2.Close();

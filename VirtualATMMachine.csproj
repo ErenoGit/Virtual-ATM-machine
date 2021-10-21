@@ -7,8 +7,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{8BA4650D-C56C-418C-A05A-821A08B77280}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Bankomat</RootNamespace>
-    <AssemblyName>Bankomat</AssemblyName>
+    <RootNamespace>VirtualATMMachine</RootNamespace>
+    <AssemblyName>VirtualATMMachine</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

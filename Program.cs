@@ -6,9 +6,19 @@ namespace VirtualATMMachine
     class Program
     {
         static Random random = new Random();
+        static string databaseLocation = "database.sqlite";
 
         static void Main(string[] args)
         {
+            if (args != null)
+            {
+                if (args.Length > 0)
+                {
+                    databaseLocation = args[0];
+                    Console.WriteLine("databaseLocation: " + databaseLocation);
+                }
+            }
+
             InitialisationSqliteFile();
 
             Console.WriteLine("------------------------");
@@ -72,7 +82,7 @@ namespace VirtualATMMachine
 
         static void CreateNewAccount(string accountNumber, int pin, int balance)
         {
-            using (var sqlite2 = new SQLiteConnection("Data Source=database.sqlite"))
+            using (var sqlite2 = new SQLiteConnection($"Data Source={databaseLocation}"))
             {
                 sqlite2.Open();
                 string sql = $"INSERT INTO accounts(accountNumber, pin, balance) VALUES(@param1,@param2,@param3);";
@@ -135,11 +145,11 @@ namespace VirtualATMMachine
         
         static void InitialisationSqliteFile()
         {
-            if (!System.IO.File.Exists("database.sqlite"))
+            if (!System.IO.File.Exists(databaseLocation))
             {
-                SQLiteConnection.CreateFile("database.sqlite");
+                SQLiteConnection.CreateFile(databaseLocation);
 
-                using (var sqlite2 = new SQLiteConnection("Data Source=database.sqlite"))
+                using (var sqlite2 = new SQLiteConnection($"Data Source={databaseLocation}"))
                 {
                     sqlite2.Open();
                     string sql = "CREATE TABLE accounts (accountNumber VARCHAR(8), pin INT, balance INT)";
@@ -154,7 +164,7 @@ namespace VirtualATMMachine
         {
             bool isExist = false;
 
-            using (var sqlite2 = new SQLiteConnection("Data Source=database.sqlite"))
+            using (var sqlite2 = new SQLiteConnection($"Data Source={databaseLocation}"))
             {
                 sqlite2.Open();
                 string sql = $"SELECT * FROM accounts WHERE accountNumber = @param1";
@@ -173,7 +183,7 @@ namespace VirtualATMMachine
         {
             int pin = 0;
 
-            using (var sqlite2 = new SQLiteConnection("Data Source=database.sqlite"))
+            using (var sqlite2 = new SQLiteConnection($"Data Source={databaseLocation}"))
             {
                 sqlite2.Open();
                 string sql = $"SELECT pin FROM accounts WHERE accountNumber= @param1";
@@ -191,7 +201,7 @@ namespace VirtualATMMachine
         {
             int pin = 0;
 
-            using (var sqlite2 = new SQLiteConnection("Data Source=database.sqlite"))
+            using (var sqlite2 = new SQLiteConnection($"Data Source={databaseLocation}"))
             {
                 sqlite2.Open();
                 string sql = $"SELECT balance FROM accounts WHERE accountNumber = @param1";
@@ -208,7 +218,7 @@ namespace VirtualATMMachine
 
         static void SetBalance(string accountNumber, int stanKonta)
         {
-            using (var sqlite2 = new SQLiteConnection("Data Source=database.sqlite"))
+            using (var sqlite2 = new SQLiteConnection($"Data Source={databaseLocation}"))
             {
                 sqlite2.Open();
                 string sql = $"UPDATE accounts SET balance = @param1 WHERE accountnumber = @param2";

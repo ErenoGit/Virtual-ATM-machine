@@ -29,13 +29,13 @@ namespace VirtualATMMachine
             Console.WriteLine("Enter 1 to login to your virtual account.");
             Console.WriteLine("Enter 2 to create a new virtual account.");
 
-            string choise = Console.ReadLine();
+            string choice = Console.ReadLine();
 
-            if(choise == "1")
+            if(choice == "1")
             {
                 Login();
             }
-            else if(choise == "2")
+            else if(choice == "2")
             {
                 CreateAccount();
             }

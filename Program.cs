@@ -138,7 +138,6 @@ namespace VirtualATMMachine
                 return;
             }
 
-            Console.Clear();
             Console.WriteLine("Welcome to your account number: " + accountNumber);
             Console.WriteLine("Your account balance is: " + GetBalance(accountNumber));
         }

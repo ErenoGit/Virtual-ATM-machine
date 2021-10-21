@@ -12,7 +12,7 @@ namespace VirtualATMMachine
             InitialisationSqliteFile();
 
             Console.WriteLine("------------------------");
-            Console.WriteLine("---Virtual ATM---");
+            Console.WriteLine("------Virtual ATM-------");
             Console.WriteLine("------------------------");
 
 

@@ -94,11 +94,13 @@ namespace VirtualATMMachine
             {
                 sqlite2.Open();
                 string sql = $"INSERT INTO accounts(accountNumber, pin, balance) VALUES(@param1,@param2,@param3);";
-                SQLiteCommand command = new SQLiteCommand(sql, sqlite2);
-                command.Parameters.Add(new SQLiteParameter("@param1", accountNumber));
-                command.Parameters.Add(new SQLiteParameter("@param2", pin));
-                command.Parameters.Add(new SQLiteParameter("@param3", balance));
-                command.ExecuteNonQuery();
+                using (SQLiteCommand command = new SQLiteCommand(sql, sqlite2))
+                {
+                    command.Parameters.Add(new SQLiteParameter("@param1", accountNumber));
+                    command.Parameters.Add(new SQLiteParameter("@param2", pin));
+                    command.Parameters.Add(new SQLiteParameter("@param3", balance));
+                    command.ExecuteNonQuery();
+                }
                 sqlite2.Close();
             }
         }
@@ -170,6 +172,7 @@ namespace VirtualATMMachine
                 {
                     SetBalance(accountNumber, GetBalance(accountNumber)+ howMuchInt);
                     Console.WriteLine("You deposited "+ howMuch);
+                    Console.WriteLine("Your account balance is now: " + GetBalance(accountNumber));
                 }
             }
             else if (choice == "2")
@@ -184,6 +187,7 @@ namespace VirtualATMMachine
                 {
                     SetBalance(accountNumber, GetBalance(accountNumber) - howMuchInt);
                     Console.WriteLine("You withdrawed " + howMuch);
+                    Console.WriteLine("Your account balance is now: " + GetBalance(accountNumber));
                 }
             }
             else
@@ -200,8 +204,10 @@ namespace VirtualATMMachine
                 {
                     sqlite2.Open();
                     string sql = "CREATE TABLE accounts (accountNumber VARCHAR(8), pin INT, balance INT)";
-                    SQLiteCommand command = new SQLiteCommand(sql, sqlite2);
-                    command.ExecuteNonQuery();
+                    using (SQLiteCommand command = new SQLiteCommand(sql, sqlite2))
+                    {
+                        command.ExecuteNonQuery();
+                    }
                     sqlite2.Close();
                 }
             }
@@ -215,11 +221,15 @@ namespace VirtualATMMachine
             {
                 sqlite2.Open();
                 string sql = $"SELECT * FROM accounts WHERE accountNumber = @param1";
-                SQLiteCommand command = new SQLiteCommand(sql, sqlite2);
-                command.Parameters.Add(new SQLiteParameter("@param1", accountNumber));
-                SQLiteDataReader reader = command.ExecuteReader();
-                while (reader.Read())
-                    isExist = true;
+                using (SQLiteCommand command = new SQLiteCommand(sql, sqlite2))
+                {
+                    command.Parameters.Add(new SQLiteParameter("@param1", accountNumber));
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                            isExist = true;
+                    }
+                }
                 sqlite2.Close();
             }
 
@@ -234,11 +244,15 @@ namespace VirtualATMMachine
             {
                 sqlite2.Open();
                 string sql = $"SELECT pin FROM accounts WHERE accountNumber= @param1";
-                SQLiteCommand command = new SQLiteCommand(sql, sqlite2);
-                command.Parameters.Add(new SQLiteParameter("@param1", accountNumber));
-                SQLiteDataReader reader = command.ExecuteReader();
-                reader.Read();
-                pin = Int32.Parse(reader["pin"].ToString());
+                using (SQLiteCommand command = new SQLiteCommand(sql, sqlite2))
+                {
+                    command.Parameters.Add(new SQLiteParameter("@param1", accountNumber));
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        reader.Read();
+                        pin = Int32.Parse(reader["pin"].ToString());
+                    }
+                }
                 sqlite2.Close();
             }
             return pin;
@@ -252,11 +266,15 @@ namespace VirtualATMMachine
             {
                 sqlite2.Open();
                 string sql = $"SELECT balance FROM accounts WHERE accountNumber = @param1";
-                SQLiteCommand command = new SQLiteCommand(sql, sqlite2);
-                command.Parameters.Add(new SQLiteParameter("@param1", accountNumber));
-                SQLiteDataReader reader = command.ExecuteReader();
-                reader.Read();
-                balance = Int32.Parse(reader["balance"].ToString());
+                using (SQLiteCommand command = new SQLiteCommand(sql, sqlite2))
+                {
+                    command.Parameters.Add(new SQLiteParameter("@param1", accountNumber));
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        reader.Read();
+                        balance = Int32.Parse(reader["balance"].ToString());
+                    }
+                }
                 sqlite2.Close();
             }
 
@@ -269,10 +287,12 @@ namespace VirtualATMMachine
             {
                 sqlite2.Open();
                 string sql = $"UPDATE accounts SET balance = @param1 WHERE accountnumber = @param2";
-                SQLiteCommand command = new SQLiteCommand(sql, sqlite2);
-                command.Parameters.Add(new SQLiteParameter("@param1", balance));
-                command.Parameters.Add(new SQLiteParameter("@param2", accountNumber));
-                command.ExecuteNonQuery();
+                using (SQLiteCommand command = new SQLiteCommand(sql, sqlite2))
+                {
+                    command.Parameters.Add(new SQLiteParameter("@param1", balance));
+                    command.Parameters.Add(new SQLiteParameter("@param2", accountNumber));
+                    command.ExecuteNonQuery();
+                }
                 sqlite2.Close();
             }
         }

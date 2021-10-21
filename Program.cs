@@ -40,6 +40,17 @@ namespace VirtualATMMachine
             int perCent = random.Next(0, 100);
             int startBalance = 0;
 
+            
+
+
+            string accountNumber = RandomAccountNumberGenerator();
+            int pin;
+            do
+            {
+                Console.WriteLine("Enter your account PIN (4 digits):");
+            }
+            while (!Int32.TryParse(Console.ReadLine(), out pin) || pin.ToString().Length != 4);
+
             if (perCent < 1)
             {
                 startBalance = 100;
@@ -55,15 +66,6 @@ namespace VirtualATMMachine
                 startBalance = 10;
                 Console.WriteLine("Congratulations, you just won start bonus 10 virtual units!");
             }
-
-
-            string accountNumber = RandomAccountNumberGenerator();
-            int pin;
-            do
-            {
-                Console.WriteLine("Enter your account PIN (4 digits):");
-            }
-            while (!Int32.TryParse(Console.ReadLine(), out pin) || pin.ToString().Length != 4);
 
             CreateNewAccount(accountNumber, pin, startBalance);
 

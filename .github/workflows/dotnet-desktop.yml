@@ -31,3 +31,13 @@ jobs:
       - name: Build Solution
         run: |
           msbuild.exe VirtualATMMachine.sln /p:platform="Any CPU" /p:configuration="Release"
+
+      - name: Restore Packages
+        run: nuget restore VirtualATMMachine.Tests.sln
+
+      - name: Build Solution
+        run: |
+          msbuild.exe VirtualATMMachine.Tests/VirtualATMMachine.Tests.sln /p:platform="Any CPU" /p:configuration="Release"
+         
+      - name: SQLiteConnector Tests
+        run: dotnet test

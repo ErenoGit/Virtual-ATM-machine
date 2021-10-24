@@ -33,4 +33,4 @@ jobs:
           msbuild.exe VirtualATMMachine.sln /p:platform="Any CPU" /p:configuration="Release"
           
       - name: SQLiteConnector Tests
-        run: dotnet test VirtualATMMachine.sln
+        run: dotnet test VirtualATMMachine.Tests/VirtualATMMachine.Tests.csproj

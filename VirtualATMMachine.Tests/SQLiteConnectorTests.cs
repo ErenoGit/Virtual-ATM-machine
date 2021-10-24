@@ -49,7 +49,7 @@ namespace VirtualATMMachine.Tests
         {
             databaseConnector.SetBalance(testAccountNumber, 300);
             int balance = databaseConnector.GetBalance(testAccountNumber);
-            Assert.IsTrue(balance == 400);
+            Assert.IsTrue(balance == 300);
         }
 
         [Test]

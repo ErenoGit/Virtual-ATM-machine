@@ -7,8 +7,6 @@ namespace VirtualATMMachine.Tests
     public class SQLiteConnectorTests
     {
         string testDatabaseLocation = "testDatabase.sqlite";
-        string testAccountNumber = "12345678";
-        int testPIN = 1234;
 
         SQLiteConnector databaseConnector;
 
@@ -35,29 +33,38 @@ namespace VirtualATMMachine.Tests
         }
 
         [Test, Order(2)]
-        public void TestCreateNewAccount()
+        [TestCase("12345678", 1234, 50)]
+        [TestCase("83764094", 9204, 150)]
+        [TestCase("33840293", 0014, 9999999)]
+        public void TestCreateNewAccount(string testAccountNumber, int testPIN, int startBalance)
         {
-            databaseConnector.CreateNewAccount(testAccountNumber, testPIN, 50);
+            databaseConnector.CreateNewAccount(testAccountNumber, testPIN, startBalance);
             bool isExist = databaseConnector.CheckIsAccountExist(testAccountNumber);
             Assert.IsTrue(isExist);
             int balance = databaseConnector.GetBalance(testAccountNumber);
-            Assert.IsTrue(balance == 50);
+            Assert.IsTrue(balance == startBalance);
         }
 
         [Test]
-        public void TestSetBalance()
+        [TestCase("12345678", 1234, 99)]
+        [TestCase("83764094", 9204, 9999999)]
+        [TestCase("33840293", 0014, 1)]
+        public void TestSetBalance(string testAccountNumber, int testPIN, int newBalance)
         {
-            databaseConnector.SetBalance(testAccountNumber, 300);
+            databaseConnector.SetBalance(testAccountNumber, newBalance);
             int balance = databaseConnector.GetBalance(testAccountNumber);
-            Assert.IsTrue(balance == 300);
+            Assert.IsTrue(balance == newBalance);
         }
 
         [Test]
-        public void TestGetPIN()
+        [TestCase("12345678", 1234)]
+        [TestCase("83764094", 9204)]
+        [TestCase("33840293", 0014)]
+        public void TestGetPIN(string testAccountNumber, int testPIN)
         {
             databaseConnector.GetPIN(testAccountNumber);
             int pin = databaseConnector.GetPIN(testAccountNumber);
-            Assert.IsTrue(pin == 1234);
+            Assert.IsTrue(pin == testPIN);
         }
     }
 }
